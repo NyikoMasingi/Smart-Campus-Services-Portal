@@ -4,11 +4,6 @@ import { collections} from '../config/db_config';
 import User from '../models/user.model';
 
 
-
-// Protected
- export const protectedRoute = async (req: Request, res: Response) => {
-    res.status(200).send( 'Successfully access the protected route');
-}
 //find all users
 export const getAllUsers = async (req: Request, res: Response) => {
     
@@ -43,43 +38,12 @@ export const getUserById = async (req: Request, res: Response) => {
         }
     }   
 };
-// Create a new user
-export const createUser = async (req: Request, res: Response) => {
- try{
-    const newUser = req.body as User;
-    const query = { email: newUser.email };
-    const existingUser = await collections.users?.findOne(query);
-
-     // Check if the user already exists
-    if (existingUser) {
-        res.status(400).send(`User with email ${newUser.email} already exists`);
-    }else{
-        // Create a new user
-        const result = await collections.users?.insertOne(newUser);
 
 
-        if(result){
-         res.status(201).send(`Successfully created a new user with id: ${result.insertedId}`);
-        }else{
-           res.status(500).send('Failed to create a new user');
-        }
-    }        
-    }catch (error:unknown) {
-    if (error instanceof Error) {
-        console.error('Error creating user:', error.message);
-    } else {
-        console.error('Error creating user:', error);
-    }
-    res.status(500).send('Error creating user' );
-    }
-}
-
-
-   
 
 // Delete a user
 export const deleteUser = async (req: Request, res: Response) => {
-    const id = req?.params?.id;
+    const id = req.body.id;
 
     try {
         const query = { _id: new ObjectId(id) };
@@ -109,9 +73,11 @@ export const deleteUser = async (req: Request, res: Response) => {
    
 //Update user details
 export const updateUser = async (req: Request, res: Response) => {
-    const id = req?.params?.id;
+    const id = req.body.id;
+
     try {
         const updatedUser: User = req.body as User;
+        updatedUser.updatedAt = new Date(); // Set the updatedAt field to the current date
         const query = { _id: new ObjectId(id) };
       
         const result = await collections.users?.updateOne(query, { $set: updatedUser });
