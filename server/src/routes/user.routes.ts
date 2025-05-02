@@ -1,31 +1,42 @@
 import express, { Router } from 'express';
-import { protectedRoute, deleteUser, getUserById, updateUser,getAllUsers,createUser } from '../controllers/user.controller';
+import { deleteUser, getUserById, updateUser,getAllUsers } from '../controllers/user.controller';
 const userRouter: Router = express.Router();
 userRouter.use(express.json()); 
 
-/**
- * @route   GET /api/users/protected
- * @desc    A protected route
- * @access  all
- */
-userRouter.get('/protected', protectedRoute);
+
 
 /**
- * @route   GET /api/users
- * @desc    Get all users
- * @access  all
- * 
- */
-
-/**
- * @route   POST api/users/
- * @desc    Create a new user
+ * @route   POST api/users/update/:id
+ * @desc    Get user details to be updated
  * @access  all (self)
  */
 
-userRouter.route('/')
-            .get(getAllUsers)
-            .post(createUser);
+userRouter.patch('/update',updateUser)
+
+
+/**
+ * @route   Get /api/users/delete/:id
+ * @desc    Delete a user
+ * @access  all
+ */
+userRouter.delete('/delete',deleteUser)
+
+/**
+ * @route   GET api/users/:id/update
+ * @desc    Get user details to be updated
+ * @access  all (self)
+ */
+userRouter.get('/:id/update',getUserById)
+
+
+
+
+/**
+ * @route   GET /api/users/
+ * @desc    All a users 
+ * @access  all
+ */
+userRouter.get('/',getAllUsers)
 
 
 /**
@@ -34,29 +45,11 @@ userRouter.route('/')
  * @access  all
  */
 
+userRouter.get('/:id',getUserById)
 
-/**
- * @route   DELETE /api/users/:id
- * @desc    Delete a user
- * @access  all
- */
 
-/**
- * @route   PATCH api/users/:id
- * @desc    Update user details
- * @access  all (self)
- */
-userRouter.all('/:id', (req, res) => {
-    if (req.method === 'GET') {
-        getUserById(req, res);
-    } else if (req.method === 'DELETE') {
-        deleteUser(req, res);
-    } else if (req.method === 'PATCH') {
-        userRouter.patch('/:id', updateUser);           
-    } else if (req.method === 'PUT') {
-        userRouter.put('/:id', updateUser);
-    }
-});
+
+
 
 
 
