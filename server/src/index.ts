@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { connectToDatabase } from './config/db_config'; 
 import userRouter from './routes/user.routes';
 import bodyParser  from 'body-parser';
+import authRouter from './routes/auth.routes';
 const app = express();
 const port = 3000;
 
@@ -19,19 +20,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
    // Middleware to handle JSON requests
    app.use(express.json());
-   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept');
-    next();
-  });
-
-  
-;
+  //  app.use((req, res, next) => {
+  //   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+  //   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  //   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept');
+  //   next();
+  // });
 
   // Define routes
   app.use('/api/users', userRouter);
-
+  app.use('/api/auth', authRouter);
  
 
 
