@@ -6,7 +6,7 @@ userRouter.use(express.json());
 
 
 /**
- * @route   POST api/users/update/:id
+ * @route   POST api/users/update
  * @desc    Get user details to be updated
  * @access  all (self)
  */
@@ -15,20 +15,11 @@ userRouter.patch('/update',updateUser)
 
 
 /**
- * @route   Get /api/users/delete/:id
+ * @route   Get /api/users/delete
  * @desc    Delete a user
  * @access  all
  */
 userRouter.delete('/delete',deleteUser)
-
-/**
- * @route   GET api/users/:id/update
- * @desc    Get user details to be updated
- * @access  all (self)
- */
-userRouter.get('/:id/update',getUserById)
-
-
 
 
 /**
