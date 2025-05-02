@@ -19,7 +19,6 @@ export default class User {
         name: string,
         email: string,
         password_hash: string,
-        _id?: ObjectId
     ) {
         this.role = role;
         this.name = name;
@@ -27,7 +26,6 @@ export default class User {
         this.password_hash = crypto.createHash("sha256").update(password_hash).digest('hex');
         this.isAcitve = true;
         this.createdAt = new Date();
-        this._id = _id;
     }
   
 }
