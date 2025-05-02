@@ -43,7 +43,7 @@ export const getUserById = async (req: Request, res: Response) => {
 
 // Delete a user
 export const deleteUser = async (req: Request, res: Response) => {
-    const id = req.body.id;
+    const id = req.params.id;
 
     try {
         const query = { _id: new ObjectId(id) };
@@ -73,7 +73,7 @@ export const deleteUser = async (req: Request, res: Response) => {
    
 //Update user details
 export const updateUser = async (req: Request, res: Response) => {
-    const id = req.body.id;
+    const id = req.params.id;
 
     try {
         const updatedUser: User = req.body as User;

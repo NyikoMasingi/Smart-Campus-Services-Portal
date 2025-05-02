@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { createUser } from '../controllers/auth.controller';
+import { registerUser } from '../controllers/auth.controller';
 
 const authRouter: Router = express.Router();
 
@@ -8,7 +8,7 @@ const authRouter: Router = express.Router();
  * @desc    Create a new user
  * @access  (Public)
  */
-authRouter.post('/register', createUser);
+authRouter.post('/register', registerUser);
 
 
 export default authRouter;

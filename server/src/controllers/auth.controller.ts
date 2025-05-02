@@ -3,19 +3,19 @@ import { collections} from '../config/db_config';
 import User from '../models/user.model';
 
 // Create a new user
-export const createUser = async (req: Request, res: Response) => {
+export const registerUser = async (req: Request, res: Response) => {
     try{
-       const newUser = req.body as User;
-       const query = { email: newUser.email };
+       const {role,name,email,password_hash} = req.body as User;
+      
+       const query = { email: email };
        const existingUser = await collections.users?.findOne(query);
    
         // Check if the user already exists
        if (existingUser) {
-           res.status(400).send(`User with email ${newUser.email} already exists`);
+           res.status(400).send(`User with email ${email} already exists`);
        }else{
            // Create a new user
-           const result = await collections.users?.insertOne(newUser);
-   
+           const result = await collections.users?.insertOne(new User(role,name,email,password_hash));
    
            if(result){
             res.status(201).send(`Successfully created a new user with id: ${result.insertedId}`);
