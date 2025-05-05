@@ -86,3 +86,5 @@ resourceRouter.delete('/delete/:id', deleteResource);
  */
 resourceRouter.get('/', getAllResources);
 
+export default resourceRouter;
+

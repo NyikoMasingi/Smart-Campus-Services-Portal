@@ -4,6 +4,7 @@ import { connectToDatabase } from './config/db_config';
 import userRouter from './routes/user.routes';
 import bodyParser  from 'body-parser';
 import authRouter from './routes/auth.routes';
+import resourceRouter from './routes/resource.routes';
 const app = express();
 const port = 3000;
 
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
   // Define routes
   app.use('/api/users', userRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/resources', resourceRouter);
  
 
 
