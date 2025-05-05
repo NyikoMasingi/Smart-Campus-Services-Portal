@@ -2,7 +2,10 @@
 require('dotenv').config({ override: true });
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import * as mongoDB from "mongodb";
-export const collections: { users?: mongoDB.Collection } = {};
+export const collections: { users?: mongoDB.Collection,
+                            resources?: mongoDB.Collection, 
+                            bookings?: mongoDB.Collection 
+                          } = {};
 const username = encodeURIComponent(process.env.MONGODB_USER!);
 const password = encodeURIComponent(process.env.MONGODB_PASSWORD!);
 const cluster = process.env.MONGO_ClUSTER_URL;
@@ -31,7 +34,13 @@ export async function connectToDatabase() {
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
     const db: mongoDB.Db = client.db(dbName);
+    
     const usersCollection: mongoDB.Collection = db.collection('users');
+    const resourcesCollection: mongoDB.Collection = db.collection('resources');
+    const bookingsCollection: mongoDB.Collection = db.collection('bookings');
+
+    collections.resources = resourcesCollection;
+    collections.bookings = bookingsCollection;
     collections.users = usersCollection;
     console.log(`Successfully connected to database: ${db.databaseName} and collection: ${usersCollection.collectionName}`);
 
