@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
   // Define routes
   app.use('/api/users', userRouter);
   app.use('/api/auth', authRouter);
-  app.use('/api/resources', resourceRouter);
+  app.use('/api/resource', resourceRouter);
  
 
 

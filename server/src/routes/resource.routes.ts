@@ -10,7 +10,7 @@ import { createResource, getResourceById, updateResource, deleteResource, getAll
  * @desc    Create a new resource
  * @access  adimin (self)
  * @body    { name: string, type: ResourceType, status: ResourceStatus, location: string }
- * @example { name: 'Conference Room', type: 'room', status: 'available', location: 'Building A' }
+ * @example { name: 'Conference Room', type: 'appointment', status: 'available', location: 'Building A' }
  * @returns { resource_id: ObjectId, name: string, type: ResourceType, status: ResourceStatus, location: string }   
  */
 resourceRouter.post('/create', createResource);
