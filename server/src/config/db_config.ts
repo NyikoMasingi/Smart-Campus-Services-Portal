@@ -5,6 +5,9 @@ import * as mongoDB from "mongodb";
 export const collections: { users?: mongoDB.Collection,
                            coures?:mongoDB.Collection,
                            stundent?:mongoDB.Collection
+                            lecturer?:mongoDB.Collection
+                            building?:mongoDB.Collection,
+                            timetableEntry?:mongoDB.Collection
                             } = {};
 const username = encodeURIComponent(process.env.MONGODB_USER!);
 const password = encodeURIComponent(process.env.MONGODB_PASSWORD!);
@@ -36,11 +39,70 @@ export async function connectToDatabase() {
     const db: mongoDB.Db = client.db(dbName);
     const usersCollection: mongoDB.Collection = db.collection('users');
     const couresCollection: mongoDB.Collection = db.collection('coures');
-    const studentCollection: mongoDB.Collection = db.collection('student')
+    const studentCollection: mongoDB.Collection = db.collection('student');
+    const lecturerCollection: mongoDB.Collection = db.collection('lecturer');
+    const buildingCollection: mongoDB.Collection = db.collection('building');
+    const timetableEntryCollection:mongoDB.Collection = db.collection('timetable_entry')
+
+
+
     collections.users = usersCollection;
+    collections.users.createIndex(
+      { email: 1 },
+      { unique: true }
+    );
     collections.coures=couresCollection;
+    collections.coures.createIndex(
+      { coures_code: 1 },
+      { unique: true }
+    );
+
+
     collections.stundent=studentCollection;
-    console.log(`Successfully connected to database: ${db.databaseName} and collections: ${usersCollection.collectionName}  ${couresCollection.collectionName}  ${studentCollection.collectionName}`);
+    collections.stundent.createIndex(
+      { student_id: 1 },
+      { unique: true }
+    );
+    collections.stundent.aggregate(
+      [
+        {
+          $lookup:
+          {
+            from:"users",
+            foreignField:"user_id",
+            as:"user"
+          }
+        }
+      ]
+    );
+
+    collections.lecturer=lecturerCollection;
+    collections.lecturer.createIndex(
+      { lecturer_id: 1 },
+      { unique: true }
+    );
+    collections.lecturer.aggregate(
+      [
+        {
+          $lookup:
+          {
+            from:"users",
+            foreignField:"user_id",
+            as:"user"
+          }
+        }
+      ]
+    );
+
+    collections.building = buildingCollection;
+
+    collections.timetableEntry= timetableEntryCollection;
+
+
+
+
+    
+    console.log(`Successfully connected to database: ${db.databaseName} and collections: ${usersCollection.collectionName}  ${couresCollection.collectionName}  ${studentCollection.collectionName} ${lecturerCollection.collectionName} ${buildingCollection.collectionName}  ${timetableEntryCollection.collectionName}`);
 
   } catch (error) {
     console.error("Error connecting to MongoDB: ", error);
