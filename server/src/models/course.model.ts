@@ -8,14 +8,14 @@ export default class Course {
     name: string;
     year: number;
     semester:number;
-    coures_code:string;
+    course_code:string;
     constructor(
         name: string,
         year: number,
         semester:number,
-        coures_code:string,
+        course_code:string,
     ){
-        this.coures_code=coures_code;
+        this.course_code=course_code;
         this.name=name;
         this.semester=semester;
         this.year= year;

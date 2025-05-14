@@ -1,5 +1,5 @@
 import { collections} from '../config/db_config';
-import Course from '../models/coures.model';
+import Course from  '../models/course.model';
 import { ObjectId } from 'mongodb';
 import Student from '../models/student.model';
 import User, { UserRole } from '../models/user.model';
@@ -8,18 +8,19 @@ import Bulding from '../models/bulding.model';
 import TimeSlot, { Day } from '../models/time_slot.model';
 import { Lesson } from '../models/lesson.model';
 import TimetableEntry from '../models/timetable_entry.model';
+import Timetable from '../models/timetable.model';
 
 
 
 
 
-    export const saveCoures = async (name: string, year: number, semester: number, coures_code: string) =>{
-      const result = collections.coures?.insertOne(new Course(name,year,semester,coures_code));
+    export const savecourse = async (name: string, year: number, semester: number, course_code: string) =>{
+      const result = collections.course?.insertOne(new Course(name,year,semester,course_code));
 
         if(result){
            return {code:200,message:`Successfully created a new course with id: ${(await result).insertedId}` ,}
            }else{
-            return{ code: 500, message:'Failed to create a new Coures'};
+            return{ code: 500, message:'Failed to create a new course'};
            }
       }
 
@@ -79,9 +80,9 @@ import TimetableEntry from '../models/timetable_entry.model';
           const result = collections.lecturer?.findOneAndUpdate(query,  { $set: updatedLecturer });
     
             if(result){
-               return {code:200,message:`Successfully added coures to lecturer` ,}
+               return {code:200,message:`Successfully added course to lecturer` ,}
                }else{
-                return{ code: 500, message:'Failed to added coures to lecturer'};
+                return{ code: 500, message:'Failed to added course to lecturer'};
                }
           }
          export const updateTimetableEntry = async (user_id:ObjectId, entries:TimetableEntry[]) =>{
@@ -110,22 +111,22 @@ import TimetableEntry from '../models/timetable_entry.model';
           const result = collections.stundent?.findOneAndUpdate(query,  { $set: updatedStudent });
     
             if(result){
-               return {code:200,message:`Successfully added coures to student` ,}
+               return {code:200,message:`Successfully added course to student` ,}
                }else{
-                return{ code: 500, message:'Failed to added coures to student'};
+                return{ code: 500, message:'Failed to added course to student'};
                }
           }
 
-      export const getAllCoures = async () =>{        
-        const coures : Course[] = await collections.coures?.find().toArray() as unknown as Course[];
-        return coures
+      export const getAllcourse = async () =>{        
+        const course : Course[] = await collections.course?.find().toArray() as unknown as Course[];
+        return course
          
         }
 
-        export const getCouresById = async (course_id:ObjectId) =>{ 
-          const query = {course_id:course_id }       
-          const coures : Course= await collections.coures?.findOne(query) as unknown as Course;
-           return coures;
+        export const getcourseById = async (course_id:ObjectId) =>{ 
+          const query = {_id:course_id }       
+          const course : Course= await collections.course?.findOne(query) as unknown as Course;
+           return course;
           }
           export const getStudentById = async (student_id:string) =>{ 
             const query = {student_id:student_id }       
@@ -148,50 +149,50 @@ import TimetableEntry from '../models/timetable_entry.model';
 
           
       
-          export const getCouresByCode = async (coures_code:string) =>{ 
-            const query = {coures_code:coures_code};    
-            const coures : Course= await collections.coures?.findOne(query) as unknown as Course;
-            return coures;
+          export const getcourseByCode = async (course_code:string) =>{ 
+            const query = {course_code:course_code};    
+            const course : Course= await collections.course?.findOne(query) as unknown as Course;
+            return course;
       
             }
 
-            export const getCouresByYearAndSemester = async (year:number,semester:number) =>{ 
+            export const getcourseByYearAndSemester = async (year:number,semester:number) =>{ 
               const query = {year: year, semester:semester}       
-              const coures : Course[]= await collections.coures?.find(query).toArray() as unknown as Course[];
-              return coures;
+              const course : Course[]= await collections.course?.find(query).toArray() as unknown as Course[];
+              return course;
         
               }
 
-              export const getCouresByYear = async (year:number) =>{ 
+              export const getcourseByYear = async (year:number) =>{ 
                 const query = {year: year}       
-                const coures : Course[]= await collections.coures?.find(query).toArray() as unknown as Course[];
+                const course : Course[]= await collections.course?.find(query).toArray() as unknown as Course[];
           
-               return coures;
+               return course;
 
                 }
-                export const getCouresBySemester = async (semester:number) =>{ 
+                export const getcourseBySemester = async (semester:number) =>{ 
                   const query = {semester:semester}       
-                  const coures : Course[]= await collections.coures?.find(query).toArray() as unknown as Course[];
+                  const course : Course[]= await collections.course?.find(query).toArray() as unknown as Course[];
             
-                  return coures;
+                  return course;
                   }
 
 
-                  export const getCouresByName = async (name:string) =>{ 
+                  export const getcourseByName = async (name:string) =>{ 
                     const query = {name:name}       
-                    const coures : Course[]= await collections.coures?.findOne(query) as unknown as Course[];
+                    const course : Course[]= await collections.course?.findOne(query) as unknown as Course[];
               
-                      if(coures){
-                         return {code:200,coures,}
+                      if(course){
+                         return {code:200,course,}
                          }else{
-                          return{ code: 401, message: `Failed to fetch coures with name: ${name}`};
+                          return{ code: 401, message: `Failed to fetch course with name: ${name}`};
                          }
                     }
 
                 export const generateTimeTable = async (semester:number) =>{ 
                     const builings: Bulding[] = await collections.building?.find().toArray() as unknown as Bulding[];
                     const query= { semester: semester}
-                    const semester_course: Course[] = await collections.coures?.find(query).toArray() as unknown as Course[];
+                    const semester_course: Course[] = await collections.course?.find(query).toArray() as unknown as Course[];
                     const weekdays:Day[]=["MONDAY", "TUESDAY","WEDNESDAY", "THURSDAY" , "FRIDAY"];
                     const hours:number[]= [8,10,12,14];
 
@@ -212,7 +213,7 @@ import TimetableEntry from '../models/timetable_entry.model';
 
                             }while(usedSlot.has(key))
                             usedSlot.add(key);
-                            const lesson: Lesson = new Lesson(current_course.semester,(i+1),current_course.year,current_building._id,current_building.name+" room: "+current_building.room_number,current_course.coures_code);
+                            const lesson: Lesson = new Lesson(current_course.semester,(i+1),current_course.year,current_building._id,current_building.name+" room: "+current_building.room_number,current_course.course_code);
                             const starTime:string= startHour+":00";
                             const endHour: number=startHour+2;
                             const endTime:string=endHour+":00";
@@ -236,16 +237,16 @@ import TimetableEntry from '../models/timetable_entry.model';
                       return array[Math.floor(Math.random()*array.length)]
                     } 
 
-                     export const getCouresByCodeInTimetableEntry = async (coures_code:string) =>{ 
+                     export const getcourseByCodeInTimetableEntry = async (course_code:string) =>{ 
                        const timetableEntry : TimetableEntry[] = (await collections.timetableEntry?.find().toArray())?.filter(
-                    entry => entry.lesson.coures_code=== coures_code 
+                    entry => entry.lesson.course_code === course_code 
                   ) as unknown as TimetableEntry[];
             
                   return timetableEntry;
       
             }
 
-            export const getCouresByYearAndSemesterInTimetableEntry = async (year:number,semester:number) =>{ 
+            export const getcourseByYearAndSemesterInTimetableEntry = async (year:number,semester:number) =>{ 
               const timetableEntry : TimetableEntry[] = (await collections.timetableEntry?.find().toArray())?.filter(
                     entry => entry.lesson.semester === semester && entry.lesson.year === year
                   ) as unknown as TimetableEntry[];
@@ -261,7 +262,7 @@ import TimetableEntry from '../models/timetable_entry.model';
               }
             
 
-              export const getCouresByYearInTimetableEntry = async (year:number) =>{ 
+              export const getcourseByYearInTimetableEntry = async (year:number) =>{ 
                    const timetableEntry : TimetableEntry[] = (await collections.timetableEntry?.find().toArray())?.filter(
                     entry => entry.lesson.year === year
                   ) as unknown as TimetableEntry[];
@@ -269,7 +270,7 @@ import TimetableEntry from '../models/timetable_entry.model';
                   return timetableEntry;
 
                 }
-                export const getCouresBySemesterInTimetableEntry = async (semester:number) =>{ 
+                export const getcourseBySemesterInTimetableEntry = async (semester:number) =>{ 
                   
                   const timetableEntry : TimetableEntry[] = (await collections.timetableEntry?.find().toArray())?.filter(
                     entry => entry.lesson.semester === semester
@@ -277,6 +278,40 @@ import TimetableEntry from '../models/timetable_entry.model';
             
                   return timetableEntry;
                   }
+                  export const getTimetableEntry = async (courses:Course[]) =>{ 
+                   // const query = {"lesson.course_code": { $in: courses.map(course => course.course_code) }};
+                    const timetableEntry : TimetableEntry[] = await collections.timetableEntry?.find().toArray() as unknown as TimetableEntry[];
+                    timetableEntry.filter(
+                      entry => entry.lesson.course_code === courses[0].course_code);
+                    return timetableEntry;
+                    }
+                  export const createTimetable = async ( timetable: Timetable) =>{
+                      const result =  await collections.timetable?.insertOne(timetable);
+
+                      if(result?.acknowledged){
+                             return {code:200 ,message: `created new timetable with id: ${result.insertedId}`};
+                       }else{
+                             return {code:500 , message:`failed to created new timetable`};
+
+                      }
+
+                  }
+
+                   export const alterTimetable = async (timetable_id:ObjectId, timetable: Timetable) =>{
+                          const query = {_id : timetable_id};
+                          const result = await collections.timetable?.updateOne(query,{ $set: timetable }) 
+
+                          if(result?.modifiedCount){
+                             return {code:200 ,message: `updated new timetable with id: ${result.upsertedId}`};
+
+                          }else{
+                             return {code:500 ,message: `failed to updated timetable`};
+
+                          }
+                    
+                  }
+
+
 
 
     

@@ -1,5 +1,5 @@
 import { generateIdNumber } from "../ulits/random.uilts";
-import Course from "./coures.model";
+import Course from "./course.model";
 import { ObjectId } from "mongodb";
 
 

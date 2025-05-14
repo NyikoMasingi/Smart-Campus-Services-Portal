@@ -3,11 +3,12 @@ require('dotenv').config({ override: true });
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import * as mongoDB from "mongodb";
 export const collections: { users?: mongoDB.Collection,
-                           coures?:mongoDB.Collection,
+                           course?:mongoDB.Collection,
                            stundent?:mongoDB.Collection
                             lecturer?:mongoDB.Collection
                             building?:mongoDB.Collection,
-                            timetableEntry?:mongoDB.Collection
+                            timetableEntry?:mongoDB.Collection,
+                            timetable?:mongoDB.Collection
                             } = {};
 const username = encodeURIComponent(process.env.MONGODB_USER!);
 const password = encodeURIComponent(process.env.MONGODB_PASSWORD!);
@@ -38,11 +39,13 @@ export async function connectToDatabase() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
     const db: mongoDB.Db = client.db(dbName);
     const usersCollection: mongoDB.Collection = db.collection('users');
-    const couresCollection: mongoDB.Collection = db.collection('coures');
+    const courseCollection: mongoDB.Collection = db.collection('course');
     const studentCollection: mongoDB.Collection = db.collection('student');
     const lecturerCollection: mongoDB.Collection = db.collection('lecturer');
     const buildingCollection: mongoDB.Collection = db.collection('building');
-    const timetableEntryCollection:mongoDB.Collection = db.collection('timetable_entry')
+    const timetableEntryCollection:mongoDB.Collection = db.collection('timetable_entry');
+    const timetableCollection:mongoDB.Collection = db.collection('timetable');
+
 
 
 
@@ -51,9 +54,9 @@ export async function connectToDatabase() {
       { email: 1 },
       { unique: true }
     );
-    collections.coures=couresCollection;
-    collections.coures.createIndex(
-      { coures_code: 1 },
+    collections.course=courseCollection;
+    collections.course.createIndex(
+      { course_code: 1 },
       { unique: true }
     );
 
@@ -98,11 +101,14 @@ export async function connectToDatabase() {
 
     collections.timetableEntry= timetableEntryCollection;
 
+    collections.timetable= timetableCollection;
+
+
 
 
 
     
-    console.log(`Successfully connected to database: ${db.databaseName} and collections: ${usersCollection.collectionName}  ${couresCollection.collectionName}  ${studentCollection.collectionName} ${lecturerCollection.collectionName} ${buildingCollection.collectionName}  ${timetableEntryCollection.collectionName}`);
+    console.log(`Successfully connected to database: ${db.databaseName} and collections: ${usersCollection.collectionName}  ${courseCollection.collectionName}  ${studentCollection.collectionName} ${lecturerCollection.collectionName} ${buildingCollection.collectionName}  ${timetableEntryCollection.collectionName}  ${timetableCollection.collectionName}`);
 
   } catch (error) {
     console.error("Error connecting to MongoDB: ", error);

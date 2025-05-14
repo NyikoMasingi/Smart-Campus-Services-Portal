@@ -12,7 +12,7 @@ export class Lesson{
     year:number;
     building_id:ObjectId;
     location:string
-    coures_code:string;
+    course_code:string;
 
     constructor(
         semester: number,
@@ -20,7 +20,7 @@ export class Lesson{
         year: number,
         building_id: ObjectId,
         location: string,
-        coures_code: string
+        course_code: string
     ) {
       
         this.semester = semester;
@@ -28,7 +28,7 @@ export class Lesson{
         this.year = year;
         this.building_id = building_id;
         this.location = location;
-        this.coures_code = coures_code;
+        this.course_code = course_code;
         this.lecturer_email=null;
         this.lecturer_name=null;
     }
