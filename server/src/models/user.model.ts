@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import * as crypto from 'crypto';
 
 
-export type UserRole = 'student' | 'lecture' | 'maintaince-staff' | 'admin';
+export type UserRole = 'student' | 'lecturer' | 'maintaince-staff' | 'admin';
 
 export default class User {
     public role: UserRole;
@@ -27,5 +27,6 @@ export default class User {
         this.isAcitve = true;
         this.createdAt = new Date();
     }
+    
   
 }
