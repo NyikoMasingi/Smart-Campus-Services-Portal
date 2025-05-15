@@ -191,14 +191,14 @@ adminRouter.get('/lecturer-auto-generate-timetable/:lecturer_id', AdminControlle
 adminRouter.post('/auto-generate-timetable/:student_id', AdminController.generateTimetable);  
 
 /**
- * @route   POST /api/admin/save-timetable/:student_id
+ * @route   POST /api/admin/save-timetable
  * @desc    Save a timetable from timetable entries generated for a student or lecturer
  * @access  admin
  * @body  {personal_id:string,name:string,entries:TimetableEntry[]} 
  *        personal_id=student_id/lecturer_id
  *        name= unique name for the timetable
  */
-adminRouter.post('/save-timetable/:personal_id', AdminController.saveTimetable);  
+adminRouter.post('/save-timetable', AdminController.saveTimetable);  
 
 /**
  * @route patch /api/admin/update-timetable/timetable_id
