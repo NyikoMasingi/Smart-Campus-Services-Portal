@@ -207,10 +207,6 @@ export const findInTimetableEntrycourseBySemester = async (req: Request, res: Re
     }
 }
 
-
-
-
-
 export const createLecturer = async (req: Request, res: Response) => {
 
     const {name,email,password_hash,role} = req.body as User;
@@ -248,9 +244,9 @@ try{
     const lecturer:Lecturer = await getLecturerById(lecturer_id);
     
     lecturer.assignedCourseList.push(course);
-     await updateTimetableEntry(lecturer.user_id,timetableEntry);
+     const result1 =await updateTimetableEntry(lecturer.user_id,timetableEntry);
     const result = await updateLecturer(lecturer_id,lecturer);
-    res.status(result.code).send(result.message)
+    res.status(result.code).send(result.message+" and "+result1.message)
 }catch(error){
     console.log(error)
 
@@ -294,6 +290,7 @@ try{
     if (lecture == null) {
         res.status(401).send(`lecture with lecture_id  ${lecturer_id} not found`)
     }
+
     const course_codes: Course[] = lecture.assignedCourseList;
     const timetableEntry: TimetableEntry[] = await getTimetableEntry(course_codes) as unknown as TimetableEntry[];
         res.status(200).send(timetableEntry);

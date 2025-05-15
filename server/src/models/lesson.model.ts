@@ -8,7 +8,6 @@ export class Lesson{
     lecturer_email: string | null;
     lecturer_name: string | null;
     semester:number;
-    lesson:number
     year:number;
     building_id:ObjectId;
     location:string
@@ -16,7 +15,6 @@ export class Lesson{
 
     constructor(
         semester: number,
-        lesson: number,
         year: number,
         building_id: ObjectId,
         location: string,
@@ -24,7 +22,6 @@ export class Lesson{
     ) {
       
         this.semester = semester;
-        this.lesson = lesson;
         this.year = year;
         this.building_id = building_id;
         this.location = location;

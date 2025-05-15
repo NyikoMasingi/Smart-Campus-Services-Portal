@@ -94,16 +94,15 @@ import Timetable from '../models/timetable.model';
           }
           
           for(let i =0;i<entries.length;i++){
-            entries[i].lesson.lecturer_email=lecturer.email;
-            entries[i].lesson.lecturer_name=lecturer.name;
+           entries[i].lesson.lecturer_email=lecturer.email;
+           entries[i].lesson.lecturer_name=lecturer.name;
              const query ={_id: entries[i]._id}
-
-          const result  = await collections.timetableEntry?.findOneAndUpdate(query,{ $set: entries[i] } )
+          const result  = await collections.timetableEntry?.updateMany(query,{ $set: entries[i] } )
           if(!result){
             return{ code: 500, message:'Failed to added  to lecturer to timetble entry'};
           }
           }
-               return {code:200,message:`Successfully added lecture to timetable entry` ,}   
+               return {code:200,message:`Successfully added lecture to timetable entry ` ,}   
           }
          export const updateStudent = async (student_id:string, updatedStudent:Student) =>{
 
@@ -213,7 +212,7 @@ import Timetable from '../models/timetable.model';
 
                             }while(usedSlot.has(key))
                             usedSlot.add(key);
-                            const lesson: Lesson = new Lesson(current_course.semester,(i+1),current_course.year,current_building._id,current_building.name+" room: "+current_building.room_number,current_course.course_code);
+                            const lesson: Lesson = new Lesson(current_course.semester,current_course.year,current_building._id,current_building.name+" room: "+current_building.room_number,current_course.course_code);
                             const starTime:string= startHour+":00";
                             const endHour: number=startHour+2;
                             const endTime:string=endHour+":00";
@@ -281,9 +280,15 @@ import Timetable from '../models/timetable.model';
                   export const getTimetableEntry = async (courses:Course[]) =>{ 
                    // const query = {"lesson.course_code": { $in: courses.map(course => course.course_code) }};
                     const timetableEntry : TimetableEntry[] = await collections.timetableEntry?.find().toArray() as unknown as TimetableEntry[];
-                    timetableEntry.filter(
-                      entry => entry.lesson.course_code === courses[0].course_code);
-                    return timetableEntry;
+                   const temp : string[]= await courses.map(course => course.course_code);
+                    
+                    const response :TimetableEntry[]=timetableEntry.filter(
+                       entry =>{ return (temp.some(t => t === entry.lesson.course_code ));
+                  });
+                
+                     
+              
+                    return response;
                     }
                   export const createTimetable = async ( timetable: Timetable) =>{
                       const result =  await collections.timetable?.insertOne(timetable);

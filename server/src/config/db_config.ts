@@ -101,6 +101,7 @@ export async function connectToDatabase() {
 
     collections.timetableEntry= timetableEntryCollection;
 
+
     collections.timetable= timetableCollection;
 
 
