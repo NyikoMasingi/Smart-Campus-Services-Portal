@@ -5,7 +5,9 @@ import userRouter from './routes/user.routes';
 import bodyParser  from 'body-parser';
 import authRouter from './routes/auth.routes';
 import adminRouter from './routes/admin.routes';
-import lecturerRouter from './routes/lecturer.routes'
+import lecturerRouter from './routes/lecturer.routes';
+import studentRoutes from './routes/student.routes';
+
 const app = express();
 const port = 3000;
 
@@ -29,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
   app.use('/api/auth', authRouter);
   app.use('/api/admin', adminRouter);
   app.use('/api/lecturer', lecturerRouter);
-
+  app.use('/api/students', studentRoutes);
  
 
 

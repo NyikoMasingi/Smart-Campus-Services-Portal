@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { collections } from '../config/db_config';
 import { ObjectId } from 'mongodb';
 
-// Utility function to generate a unique lecturer ID
+
 const generateIdNumber = (): string => {
-  const timestamp = Date.now().toString(36); // Convert timestamp to base-36 string
-  const randomPart = Math.random().toString(36).substring(2, 10); // Generate a random string
+  const timestamp = Date.now().toString(36); 
+  const randomPart = Math.random().toString(36).substring(2, 10); 
   return `${timestamp}-${randomPart}`;
 };
 
@@ -13,7 +13,7 @@ const generateIdNumber = (): string => {
 export const createLecturer = async (req: Request, res: Response): Promise<void> => {
   try {
     const { user_id, assignedCourseList } = req.body;
-    const lecturer_id = generateIdNumber(); // Generate a unique lecturer ID
+    const lecturer_id = generateIdNumber(); 
 
     const newLecturer = {
       user_id: new ObjectId(user_id),

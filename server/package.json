@@ -7,7 +7,7 @@
     "type-check": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/index.ts",
-    "dev": "npm run type-check && ts-node-dev --respawn --env-file=.development.env src/index.ts"
+    "dev": "npm run type-check && ts-node-dev --respawn  src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongodb": "^6.16.0",
+    "mongoose": "^8.14.3",
     "server": "file:"
   },
   "devDependencies": {
