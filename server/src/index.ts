@@ -7,7 +7,8 @@ import authRouter from './routes/auth.routes';
 import adminRouter from './routes/admin.routes';
 import lecturerRouter from './routes/lecturer.routes';
 import studentRoutes from './routes/student.routes';
-
+import courseRoutes from './routes/course.routes';
+import maintenanceRoutes from './routes/maintenance.route'
 const app = express();
 const port = 3000;
 
@@ -32,6 +33,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
   app.use('/api/admin', adminRouter);
   app.use('/api/lecturer', lecturerRouter);
   app.use('/api/students', studentRoutes);
+  app.use('/api/courses', courseRoutes);
+  app.use("/api/maintenance", maintenanceRoutes);
  
 
 

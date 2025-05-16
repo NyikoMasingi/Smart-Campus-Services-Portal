@@ -8,7 +8,8 @@ export const collections: { users?: mongoDB.Collection,
                             lecturer?:mongoDB.Collection
                             building?:mongoDB.Collection,
                             timetableEntry?:mongoDB.Collection,
-                            timetable?:mongoDB.Collection
+                            timetable?:mongoDB.Collection,
+                            maintenancePersonnel?: mongoDB.Collection 
                             } = {};
 const username = encodeURIComponent(process.env.MONGODB_USER!);
 const password = encodeURIComponent(process.env.MONGODB_PASSWORD!);
@@ -18,7 +19,7 @@ const options: mongoDB.ConnectOptions = process.env.MONGO_OPTIONS as  mongoDB.Co
 
 
 const uri =`mongodb+srv://${username}:${password}@${cluster}/?${options}`;
-// const uri = "mongodb+srv://schoolPortal:schoolPortal1@cluster0.p8ocflq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+ // const uri = "mongodb+srv://schoolPortal:schoolPortal1@cluster0.p8ocflq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
   // Create a MongoClient with a MongoClientOptions object to set the Stable API version
   const client = new MongoClient(uri, {
     serverApi: {
@@ -45,6 +46,8 @@ export async function connectToDatabase() {
     const buildingCollection: mongoDB.Collection = db.collection('building');
     const timetableEntryCollection:mongoDB.Collection = db.collection('timetable_entry');
     const timetableCollection:mongoDB.Collection = db.collection('timetable');
+    const maintenanceCollection: mongoDB.Collection = db.collection('maintenance_personnel');
+
 
 
 
@@ -103,6 +106,24 @@ export async function connectToDatabase() {
 
 
     collections.timetable= timetableCollection;
+
+    collections.maintenancePersonnel = maintenanceCollection;
+    collections.maintenancePersonnel.createIndex(
+      { maintenance_id: 1 },
+      { unique: true }
+    );
+    collections.maintenancePersonnel.aggregate(
+      [
+        {
+          $lookup:
+          {
+            from:"users",
+            foreignField:"user_id",
+            as:"user"
+          }
+        }
+      ]
+    );
 
 
 
