@@ -8,7 +8,9 @@ import adminRouter from './routes/admin.routes';
 import lecturerRouter from './routes/lecturer.routes';
 import studentRoutes from './routes/student.routes';
 import courseRoutes from './routes/course.routes';
-import maintenanceRoutes from './routes/maintenance.route'
+import maintenanceRoutes from './routes/maintenance.route';
+import ticketRouter from './routes/ticket.route';
+
 const app = express();
 const port = 3000;
 
@@ -34,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
   app.use('/api/lecturer', lecturerRouter);
   app.use('/api/students', studentRoutes);
   app.use('/api/courses', courseRoutes);
+  app.use('/api/courses', ticketRouter);
   app.use("/api/maintenance", maintenanceRoutes);
  
 
