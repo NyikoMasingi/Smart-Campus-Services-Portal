@@ -10,7 +10,8 @@ export const collections: { users?: mongoDB.Collection,
                             timetableEntry?:mongoDB.Collection,
                             timetable?:mongoDB.Collection,
                             maintenancePersonnel?: mongoDB.Collection ,
-                            tickets?: mongoDB.Collection
+                            tickets?: mongoDB.Collection,
+                            bookings?: mongoDB.Collection
                             } = {};
 const username = encodeURIComponent(process.env.MONGODB_USER!);
 const password = encodeURIComponent(process.env.MONGODB_PASSWORD!);
@@ -49,8 +50,7 @@ export async function connectToDatabase() {
     const timetableCollection:mongoDB.Collection = db.collection('timetable');
     const maintenanceCollection: mongoDB.Collection = db.collection('maintenance_personnel');
     const ticketsCollection: mongoDB.Collection = db.collection("tickets");
-
-
+    const bookingsCollection: mongoDB.Collection = db.collection('bookings');
 
 
     collections.users = usersCollection;
@@ -127,6 +127,14 @@ export async function connectToDatabase() {
 
     collections.tickets = ticketsCollection;
     collections.tickets.createIndex({ ticket_id: 1 }, { unique: true });
+    collections.bookings = bookingsCollection;
+    collections.bookings.createIndex({ buildingId: 1 });
+    collections.bookings.createIndex({ userId: 1 });
+    collections.bookings.createIndex({ status: 1 });
+    collections.bookings.createIndex({ startTime: 1, endTime: 1 });
+
+
+
 
 
 
