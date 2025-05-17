@@ -19,8 +19,8 @@ const dbName = process.env.MONGODB_DB_NAME;
 const options: mongoDB.ConnectOptions = process.env.MONGO_OPTIONS as  mongoDB.ConnectOptions; 
 
 
-//const uri =`mongodb+srv://${username}:${password}@${cluster}/?${options}`;
-  const uri = "mongodb+srv://schoolPortal:schoolPortal1@cluster0.p8ocflq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri =`mongodb+srv://${username}:${password}@${cluster}/?${options}`;
+//const uri = "mongodb+srv://schoolPortal:schoolPortal1@cluster0.p8ocflq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
   // Create a MongoClient with a MongoClientOptions object to set the Stable API version
   const client = new MongoClient(uri, {
     serverApi: {
@@ -49,8 +49,6 @@ export async function connectToDatabase() {
     const timetableCollection:mongoDB.Collection = db.collection('timetable');
     const maintenanceCollection: mongoDB.Collection = db.collection('maintenance_personnel');
     const ticketsCollection: mongoDB.Collection = db.collection("tickets");
-
-
 
 
 
@@ -109,7 +107,6 @@ export async function connectToDatabase() {
 
 
     collections.timetable= timetableCollection;
-
     collections.maintenancePersonnel = maintenanceCollection;
     collections.maintenancePersonnel.createIndex(
       { maintenance_id: 1 },
@@ -130,6 +127,10 @@ export async function connectToDatabase() {
 
     collections.tickets = ticketsCollection;
     collections.tickets.createIndex({ ticket_id: 1 }, { unique: true });
+
+
+
+
 
 
 
