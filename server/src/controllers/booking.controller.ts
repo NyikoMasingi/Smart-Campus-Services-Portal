@@ -53,9 +53,47 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
 };
 
 // Get all Bookings
+// Get all Bookings with building and user details
 export const getAllBookings = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const bookings = await collections.bookings?.find().toArray();
+    const bookings = await collections.bookings?.aggregate([
+      {
+        $lookup: {
+          from: 'building', // Collection name for buildings
+          localField: 'buildingId',
+          foreignField: '_id',
+          as: 'building'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users', // Collection name for users
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$building'
+      },
+      {
+        $unwind: '$user'
+      },
+      {
+        $project: {
+          _id: 1,
+          purpose: 1,
+          startTime: 1,
+          endTime: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          buildingName: '$building.name',
+          requesterName: '$user.name',
+        }
+      }
+    ]).toArray();
+
     res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching bookings:', error);
@@ -63,20 +101,60 @@ export const getAllBookings = async (_req: Request, res: Response): Promise<void
   }
 };
 
-// Get Booking by ID
+
+// Get Booking by ID with building and user details
 export const getBookingById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const booking = await collections.bookings?.findOne({ _id: new ObjectId(req.params.id) });
-    if (!booking) {
-      res.status(404).json({ message: 'Booking not found' });
+    const bookingId = new ObjectId(req.params.id);
+
+    const result = await collections.bookings?.aggregate([
+      {
+        $match: { _id: bookingId }
+      },
+      {
+        $lookup: {
+          from: 'building',
+          localField: 'buildingId',
+          foreignField: '_id',
+          as: 'building'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: '$building' },
+      { $unwind: '$user' },
+      {
+        $project: {
+          _id: 1,
+          purpose: 1,
+          startTime: 1,
+          endTime: 1,
+          status: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          buildingName: '$building.name',
+          requesterName: '$user.name'
+        }
+      }
+    ]).toArray();
+
+    if (result && result.length > 0) {
+      res.status(200).json(result[0]);
     } else {
-      res.status(200).json(booking);
+      res.status(404).json({ message: 'Booking not found' });
     }
   } catch (error) {
-    console.error('Error fetching booking:', error);
+    console.error('Error fetching booking by ID:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 // Update Booking
 export const updateBooking = async (req: Request, res: Response): Promise<void> => {

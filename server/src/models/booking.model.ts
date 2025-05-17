@@ -1,6 +1,4 @@
-import { ObjectId } from "mongodb";
-
-export type BookingStatus = "pending" | "approved" | "rejected";
+import { ObjectId } from 'mongodb';
 
 export default class Booking {
     _id!: ObjectId;
@@ -9,7 +7,7 @@ export default class Booking {
     startTime: Date;
     endTime: Date;
     purpose: string;
-    status: BookingStatus;
+    status: 'pending' | 'approved' | 'rejected';
 
     constructor(
         buildingId: ObjectId,
@@ -17,7 +15,7 @@ export default class Booking {
         startTime: Date,
         endTime: Date,
         purpose: string,
-        status: BookingStatus = "pending"
+        status: 'pending' | 'approved' | 'rejected' = 'pending'
     ) {
         this.buildingId = buildingId;
         this.userId = userId;
