@@ -175,7 +175,7 @@ const TicketForm = ({ initialData, onSubmit, isLoading = false }: TicketFormProp
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="">Unassigned</SelectItem>
+                    <SelectItem value="unassigned">Unassigned</SelectItem>
                     {staffMembers.map((staff) => (
                       <SelectItem key={staff.id} value={staff.name}>
                         {staff.name} - {staff.role}
