@@ -10,6 +10,7 @@ import studentRoutes from './routes/student.routes';
 import courseRoutes from './routes/course.routes';
 import maintenanceRoutes from './routes/maintenance.route';
 import ticketRouter from './routes/ticket.route';
+import buildingRouter from './routes/building.routes';
 
 const app = express();
 const port = 3000;
@@ -38,6 +39,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
   app.use('/api/courses', courseRoutes);
   app.use("/api/maintenance", maintenanceRoutes);
   app.use('/api/tickets', ticketRouter);
+  app.use('/api/building', buildingRouter);
 
 
   
