@@ -7,6 +7,12 @@ import authRouter from './routes/auth.routes';
 import adminRouter from './routes/admin.routes';
 import lecturerRouter from './routes/lecturer.routes';
 import studentRoutes from './routes/student.routes';
+<<<<<<< HEAD
+=======
+import courseRoutes from './routes/course.routes';
+import maintenanceRoutes from './routes/maintenance.route';
+//import ticketRouter from './routes/ticket.route';
+>>>>>>> 4896bfd9dd687e1eb765c8206d11cda6220cb5ca
 
 const app = express();
 const port = 3000;
@@ -32,7 +38,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
   app.use('/api/admin', adminRouter);
   app.use('/api/lecturer', lecturerRouter);
   app.use('/api/students', studentRoutes);
+<<<<<<< HEAD
  
+=======
+  app.use('/api/courses', courseRoutes);
+  app.use("/api/maintenance", maintenanceRoutes);
+   //app.use('/api/courses', ticketRouter);
+>>>>>>> 4896bfd9dd687e1eb765c8206d11cda6220cb5ca
 
 
   
