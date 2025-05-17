@@ -2,6 +2,7 @@
 import React from 'react';
 import { Menu, Bell, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {  UserButton } from "@clerk/clerk-react";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -35,13 +36,9 @@ const Header = ({ toggleSidebar }: HeaderProps) => {
         >
           <Bell size={20} />
         </button>
-        <button className="p-2 rounded-full hover:bg-gray-100">
-          <Settings size={20} />
-        </button>
+        
         <div className="hidden md:flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-campus-blue text-white flex items-center justify-center font-bold">
-            A
-          </div>
+         <UserButton />
           <span className="text-sm font-medium">Admin</span>
         </div>
       </div>
