@@ -53,8 +53,6 @@ export async function connectToDatabase() {
     const bookingsCollection: mongoDB.Collection = db.collection('bookings');
 
 
-
-
     collections.users = usersCollection;
     collections.users.createIndex(
       { email: 1 },
@@ -134,6 +132,10 @@ export async function connectToDatabase() {
     collections.bookings.createIndex({ userId: 1 });
     collections.bookings.createIndex({ status: 1 });
     collections.bookings.createIndex({ startTime: 1, endTime: 1 });
+
+
+
+
 
 
 
