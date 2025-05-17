@@ -1,35 +1,37 @@
-
-import React, { useState } from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
+import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Search, CheckCircle, XCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface Request {
-  id: string;
+  _id: string;
   type: 'room' | 'maintenance';
-  title: string;
-  requester: string;
-  department: string;
+  purpose: string;
+  requesterName: string;
+  buildingName: string;
   dateSubmitted: string;
+  startTime: string;
+  endTime: string;
   priority: 'high' | 'medium' | 'low';
   status: 'pending' | 'approved' | 'rejected';
 }
@@ -37,102 +39,111 @@ interface Request {
 const ServiceApprovals = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
-  
-  const [requests, setRequests] = useState<Request[]>([
-    {
-      id: "REQ-001",
-      type: "room",
-      title: "Conference Room A Booking",
-      requester: "John Smith",
-      department: "Administration",
-      dateSubmitted: "2023-05-15",
-      priority: "medium",
-      status: "pending"
-    },
-    {
-      id: "REQ-002",
-      type: "maintenance",
-      title: "Projector Repair - Room 205",
-      requester: "Sarah Johnson",
-      department: "Faculty",
-      dateSubmitted: "2023-05-14",
-      priority: "high",
-      status: "pending"
-    },
-    {
-      id: "REQ-003",
-      type: "room",
-      title: "Auditorium Booking for Seminar",
-      requester: "David Wilson",
-      department: "Science",
-      dateSubmitted: "2023-05-13",
-      priority: "high",
-      status: "approved"
-    },
-    {
-      id: "REQ-004",
-      type: "maintenance",
-      title: "AC Repair - Computer Lab",
-      requester: "Emily Davis",
-      department: "IT",
-      dateSubmitted: "2023-05-12",
-      priority: "medium",
-      status: "pending"
-    },
-    {
-      id: "REQ-005",
-      type: "room",
-      title: "Study Room Booking",
-      requester: "Michael Brown",
-      department: "Student Affairs",
-      dateSubmitted: "2023-05-11",
-      priority: "low",
-      status: "rejected"
-    },
-  ]);
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
+const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const approveRequest = (id: string) => {
-    setRequests(requests.map(request => 
-      request.id === id ? { ...request, status: 'approved' } : request
-    ));
-    
-    toast({
-      title: "Request Approved",
-      description: `Request ${id} has been approved successfully.`,
-    });
-  };
-  
-  const rejectRequest = (id: string) => {
-    setRequests(requests.map(request => 
-      request.id === id ? { ...request, status: 'rejected' } : request
-    ));
-    
-    toast({
-      title: "Request Rejected",
-      description: `Request ${id} has been rejected.`,
-      variant: "destructive",
-    });
+const openModal = (request: Request) => {
+  setSelectedRequest(request);
+  setIsModalOpen(true);
+};
+
+const closeModal = () => {
+  setSelectedRequest(null);
+  setIsModalOpen(false);
+};
+
+  // Fetch requests
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/booking');
+        const data = response.data.map((item: any) => ({
+          _id: item._id,
+          type: 'room',
+          purpose: item.purpose,
+          requesterName: item.requesterName,
+          buildingName: item.buildingName,
+          dateSubmitted: new Date(item.createdAt).toLocaleDateString(),
+          startTime: new Date(item.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          endTime: new Date(item.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          priority:
+            item.status === 'approved' ? 'high' :
+            item.status === 'pending' ? 'medium' : 'low',
+          status: item.status
+        }));
+        setRequests(data);
+      } catch (err) {
+        setError("Failed to fetch requests.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, []);
+
+  const approveRequest = async (id: string) => {
+    try {
+      await axios.patch(`http://localhost:3000/api/booking/${id}/status`, { status: 'approved' });
+      setRequests(prev =>
+        prev.map(r => r._id === id ? { ...r, status: 'approved', priority: 'high' } : r)
+      );
+      toast({
+        title: "Request Approved",
+        description: `Request has been approved successfully.`,
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "There was an error approving the request.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const filteredRequests = requests.filter(request => 
-    request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    request.requester.toLowerCase().includes(searchTerm.toLowerCase())
+  const rejectRequest = async (id: string) => {
+    try {
+      await axios.patch(`http://localhost:3000/api/booking/${id}/status`, { status: 'rejected' });
+      setRequests(prev =>
+        prev.map(r => r._id === id ? { ...r, status: 'rejected', priority: 'low' } : r)
+      );
+      toast({
+        title: "Request Rejected",
+        description: `Request has been rejected.`,
+        variant: "destructive",
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "There was an error rejecting the request.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const filteredRequests = requests.filter((request) =>
+    request.purpose.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    request.requesterName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    request.buildingName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const pendingRequests = filteredRequests.filter(r => r.status === 'pending');
-  const approvedRequests = filteredRequests.filter(r => r.status === 'approved');
-  const rejectedRequests = filteredRequests.filter(r => r.status === 'rejected');
+  const pendingRequests = filteredRequests.filter((r) => r.status === 'pending');
+  const approvedRequests = filteredRequests.filter((r) => r.status === 'approved');
+  const rejectedRequests = filteredRequests.filter((r) => r.status === 'rejected');
 
   const RequestTable = ({ data }: { data: Request[] }) => (
     <div className="border rounded-md">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Request</TableHead>
+            <TableHead>Purpose</TableHead>
             <TableHead>Requester</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Date</TableHead>
+            <TableHead>Building</TableHead>
+            <TableHead>Start</TableHead>
+            <TableHead>End</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -140,20 +151,20 @@ const ServiceApprovals = () => {
         </TableHeader>
         <TableBody>
           {data.length > 0 ? (
-            data.map(request => (
-              <TableRow key={request.id}>
-                <TableCell className="font-mono">{request.id}</TableCell>
+            data.map((request) => (
+              <TableRow key={request._id}>
                 <TableCell className="font-medium">
-                  {request.title}
+                  {request.purpose}
                   <Badge className="ml-2" variant="outline">
                     {request.type === 'room' ? 'Room' : 'Maintenance'}
                   </Badge>
                 </TableCell>
-                <TableCell>{request.requester}</TableCell>
-                <TableCell>{request.department}</TableCell>
-                <TableCell>{request.dateSubmitted}</TableCell>
+                <TableCell>{request.requesterName}</TableCell>
+                <TableCell>{request.buildingName}</TableCell>
+                <TableCell>{request.startTime}</TableCell>
+                <TableCell>{request.endTime}</TableCell>
                 <TableCell>
-                  <Badge 
+                  <Badge
                     variant="outline"
                     className={
                       request.priority === 'high' ? 'border-red-500 text-red-500' :
@@ -165,45 +176,42 @@ const ServiceApprovals = () => {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge 
+                  <Badge
                     variant={
                       request.status === 'pending' ? 'outline' :
                       request.status === 'approved' ? 'default' : 'secondary'
                     }
-                    className={
-                      request.status === 'rejected' ? 'bg-red-100 text-red-800 hover:bg-red-100' : ''
-                    }
+                    className={request.status === 'rejected' ? 'bg-red-100 text-red-800' : ''}
                   >
                     {request.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">
-                  {request.status === 'pending' && (
+                <TableCell className="text-right space-x-2">
+                  {request.status === 'pending' ? (
                     <>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => approveRequest(request.id)}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => approveRequest(request._id)}
                         className="text-green-600"
                       >
                         <CheckCircle size={18} className="mr-1" />
                         Approve
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => rejectRequest(request.id)}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => rejectRequest(request._id)}
                         className="text-red-600"
                       >
                         <XCircle size={18} className="mr-1" />
                         Reject
                       </Button>
                     </>
-                  )}
-                  {request.status !== 'pending' && (
-                    <Button variant="ghost" size="sm">
-                      View Details
-                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="sm" onClick={() => openModal(request)}>
+  View Details
+</Button>
                   )}
                 </TableCell>
               </TableRow>
@@ -285,15 +293,50 @@ const ServiceApprovals = () => {
         <TabsContent value="pending" className="mt-6">
           <RequestTable data={pendingRequests} />
         </TabsContent>
-        
+
         <TabsContent value="approved" className="mt-6">
           <RequestTable data={approvedRequests} />
         </TabsContent>
-        
+
         <TabsContent value="rejected" className="mt-6">
           <RequestTable data={rejectedRequests} />
         </TabsContent>
       </Tabs>
+      {isModalOpen && selectedRequest && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full space-y-4">
+      <h2 className="text-xl font-bold text-campus-blue">Request Details</h2>
+      <div>
+        <strong>Purpose:</strong> {selectedRequest.purpose}
+      </div>
+      <div>
+        <strong>Requester:</strong> {selectedRequest.requesterName}
+      </div>
+      <div>
+        <strong>Building:</strong> {selectedRequest.buildingName}
+      </div>
+      <div>
+        <strong>Date Submitted:</strong> {selectedRequest.dateSubmitted}
+      </div>
+      <div>
+        <strong>Start Time:</strong> {selectedRequest.startTime}
+      </div>
+      <div>
+        <strong>End Time:</strong> {selectedRequest.endTime}
+      </div>
+      <div>
+        <strong>Status:</strong>{" "}
+        <Badge variant="outline">{selectedRequest.status}</Badge>
+      </div>
+      <div className="text-right">
+        <Button variant="outline" onClick={closeModal}>
+          Close
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

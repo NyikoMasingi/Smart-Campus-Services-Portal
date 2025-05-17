@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import { ObjectId } from "mongodb";
-import { collections} from '../config/db_config';
+import { collections } from '../config/db_config';
+import { ObjectId } from 'mongodb';
 import User from '../models/user.model';
 
-
-//find all users
+// Get all users
 export const getAllUsers = async (req: Request, res: Response) => {
     
     try{
@@ -17,82 +16,67 @@ export const getAllUsers = async (req: Request, res: Response) => {
         }
     }
 };
-    
 
 
-//find user by id
-export const getUserById = async (req: Request, res: Response) => {
-    const id = req.params.id ;
-    try{
-        const query = { _id: new ObjectId(id) };
-        const user: User | null = await collections.users?.findOne(query) as User;
-        if(user === null){
-            res.status(404).send(`Unable to find matching document with id: ${req?.params?.id}`);   
-        }else{
-             res.status(200).send(user);
-        }
-    }catch(error){
-        if (error instanceof Error) {
-        console.error('Error retrieving user:', error.message);
-        res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
-        }
-    }   
+// Get a user by ID
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = await collections.users?.findOne({ _id: new ObjectId(req.params.id) });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+    } else {
+      res.status(200).json(user);
+    }
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 };
 
+// Update a user by ID
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const updatedUser = {
+      ...req.body,
+      updatedAt: new Date(),
+    };
 
+    const result = await collections.users?.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: updatedUser }
+    );
 
-// Delete a user
-export const deleteUser = async (req: Request, res: Response) => {
-    const id = req.params.id;
+    if (result?.modifiedCount) {
+      res.status(200).json({ message: 'User updated successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found or no changes made' });
+    }
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
-    try {
-        const query = { _id: new ObjectId(id) };
-        const result = await collections.users?.findOne(query);
+// "Soft delete" a user by ID (set isActive to false)
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const query = { _id: new ObjectId(req.params.id) };
+    const user = await collections.users?.findOne(query);
 
-        if (result) {
-            result.isActive = false;
-            const updateResult = await collections.users?.updateOne(query, { $set: result });
-            if (updateResult && updateResult.modifiedCount) {
-                res.status(200).send(`Successfully deleted user with id ${id}`);
-            } else {
-                res.status(304).send(`Failed to delete user with id ${id}`);
-            }
-            res.status(202).send(`Successfully removed game with id ${id}`);
-        } else if (!result) {
-            res.status(400).send(`Failed to remove game with id ${id}`);
-
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error(error.message);
-            res.status(400).send(error.message);
-        }
+    if (!user) {
+       res.status(404).json({ message: 'User not found' });
     }
 
+    // Soft delete: set isActive to false
+    const result = await collections.users?.updateOne(query, { $set: { isActive: false, updatedAt: new Date() } });
+
+    if (result?.modifiedCount) {
+      res.status(200).json({ message: 'User deleted (soft delete) successfully' });
+    } else {
+      res.status(304).json({ message: 'User deletion failed or no changes made' });
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 };
-   
-//Update user details
-export const updateUser = async (req: Request, res: Response) => {
-    const id = req.params.id;
-
-    try {
-        const updatedUser: User = req.body as User;
-        updatedUser.updatedAt = new Date(); // Set the updatedAt field to the current date
-        const query = { _id: new ObjectId(id) };
-      
-        const result = await collections.users?.updateOne(query, { $set: updatedUser });
-
-        if(result){
-            res.status(200).send(`Successfully updated user with id ${id}`);
-        }else{
-            res.status(304).send(`User with id: ${id} not updated`);
-        }
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error(error.message);
-            res.status(400).send(error.message);
-        }
-    } 
-} 
-
-

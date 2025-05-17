@@ -12,6 +12,7 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {  UserButton } from "@clerk/clerk-react";
 
 interface SidebarProps {
   isMobile: boolean;
@@ -26,7 +27,7 @@ const Sidebar = ({ isMobile, isOpen, toggleSidebar }: SidebarProps) => {
     { name: 'Device Control', path: '/devices', icon: Monitor },
     { name: 'Service Approvals', path: '/approvals', icon: Calendar },
     { name: 'Reports', path: '/reports', icon: FileSpreadsheet },
-    { name: 'Settings', path: '/settings', icon: Settings },
+   
   ];
 
   if (isMobile && !isOpen) return null;
@@ -75,12 +76,10 @@ const Sidebar = ({ isMobile, isOpen, toggleSidebar }: SidebarProps) => {
       </nav>
       <div className="p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-campus-light text-campus-blue flex items-center justify-center font-bold">
-            A
-          </div>
+           <UserButton />
           <div>
             <p className="text-sm font-medium text-white">Admin User</p>
-            <p className="text-xs text-gray-400">admin@smartcampus.edu</p>
+            
           </div>
         </div>
       </div>

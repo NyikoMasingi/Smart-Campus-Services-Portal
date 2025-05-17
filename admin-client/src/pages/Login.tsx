@@ -25,7 +25,7 @@ const Login = () => {
               <rect width="40" height="40" rx="8" fill="#4F46E5" fillOpacity="0.1" />
               <path d="M20 12L26 16V24L20 28L14 24V16L20 12Z" fill="#4F46E5" />
             </svg>
-            <span className="ml-2 font-bold text-lg text-gray-800">Logo</span>
+            
           </div>
 
           <div className="text-center mb-8">
